@@ -1862,10 +1862,11 @@ void DotNode::writeBox(FTextStream &t,
   {
     t << convertLabel(m_label);
   }
-  t << "\",height=0.2,width=0.4";
+  //t << "\",height=0.2,width=0.4";
+  t << "\"";
   if (m_isRoot)
   {
-    t << ",color=\"black\", fillcolor=\"grey75\", style=\"filled\", fontcolor=\"black\"";
+     t << ", fontsize=" << (FONTSIZE + 2) ;
   }
   else 
   {
