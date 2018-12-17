@@ -252,6 +252,7 @@ static int getDotFontSize()
 static void writeGraphHeader(FTextStream &t,const QCString &title=QCString())
 {
   static bool interactiveSVG = Config_getBool(INTERACTIVE_SVG);
+  t << " // " << __FILE__ << ":" << __LINE__ << "\n";
   t << "digraph ";
   if (title.isEmpty())
   {
@@ -1902,6 +1903,7 @@ void DotNode::writeBox(FTextStream &t,
     t << ",tooltip=\" \""; // space in tooltip is required otherwise still something like 'Node0' is used
   }
   t << "];" << endl; 
+  t << " // " << __FILE__ << ":" << __LINE__ << "\n";
 }
 
 void DotNode::writeArrow(FTextStream &t,
@@ -4792,6 +4794,7 @@ bool DotGroupCollaboration::isTrivial() const
 void DotGroupCollaboration::writeGraphHeader(FTextStream &t,
       const QCString &title) const
 {
+  t << " // " << __FILE__ << ":" << __LINE__ << "\n";
   t << "digraph ";
   if (title.isEmpty())
   {

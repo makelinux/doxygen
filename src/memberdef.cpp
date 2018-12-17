@@ -3029,6 +3029,7 @@ void MemberDef::writeDocumentation(MemberList *ml,
 
   }
 
+  msg("Generating docs for function %s\n",qPrint(qualifiedName()));
   _writeEnumValues(ol,scopedContainer,cfname,ciname,cname);
   _writeReimplements(ol);
   _writeReimplementedBy(ol);
@@ -3414,6 +3415,7 @@ static QCString escapeAnchor(const QCString &anchor)
 void MemberDef::setAnchor()
 {
   QCString memAnchor = name();
+  printf("%s %s\n", __func__, (const char*)memAnchor);
   if (!m_impl->args.isEmpty()) memAnchor+=m_impl->args;
 
   memAnchor.prepend(definition()); // actually the method name is now included
