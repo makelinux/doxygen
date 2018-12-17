@@ -123,6 +123,7 @@ div.navtab {
 /* @group Link Styling */
 
 a {
+	xfont-size: 150%;
 	color: ##50;
 	font-weight: normal;
 	text-decoration: none;
