@@ -278,7 +278,7 @@ static void writeGraphHeader(FTextStream &t,const QCString &title=QCString())
        "labelfontname=\"" << FONTNAME << "\","
        "labelfontsize=\"" << FONTSIZE << "\"];\n";
   t << "  node [fontname=\"" << FONTNAME << "\","
-       "fontsize=\"" << FONTSIZE << "\",shape=record];\n";
+       "fontsize=\"" << FONTSIZE << "\",shape=none];\n";
 }
 
 static void writeGraphFooter(FTextStream &t)
@@ -1280,7 +1280,7 @@ DotManager::DotManager() : m_dotMaps(1009)
   int numThreads = QMIN(32,Config_getInt(DOT_NUM_THREADS));
   if (numThreads!=1)
   {
-    if (numThreads==0) numThreads = QMAX(2,QThread::idealThreadCount()+1);
+    if (numThreads==0) numThreads = QMAX(2,QThread::idealThreadCount());
     for (i=0;i<numThreads;i++)
     {
       DotWorkerThread *thread = new DotWorkerThread(m_queue);
