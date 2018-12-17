@@ -7177,7 +7177,7 @@ static void parseMain(const char *fileName,
       }
     }
     rt->lang = language;
-    msg("Parsing file %s...\n",yyFileName.data());
+    //msg("Parsing file %s...\n",yyFileName.data());
 
     current_root  = rt ;
     initParser();

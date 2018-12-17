@@ -2105,7 +2105,7 @@ void MemberDef::_writeCallGraph(OutputList &ol)
     }
     else if (!callGraph.isTrivial())
     {
-      msg("Generating call graph for function %s\n",qPrint(qualifiedName()));
+      //msg("Generating call graph for function %s\n",qPrint(qualifiedName()));
       ol.disable(OutputGenerator::Man);
       ol.startCallGraph();
       ol.parseText(theTranslator->trCallGraph());
@@ -2128,7 +2128,7 @@ void MemberDef::_writeCallerGraph(OutputList &ol)
     }
     else if (!callerGraph.isTrivial() && !callerGraph.isTooBig())
     {
-      msg("Generating caller graph for function %s\n",qPrint(qualifiedName()));
+      //msg("Generating caller graph for function %s\n",qPrint(qualifiedName()));
       ol.disable(OutputGenerator::Man);
       ol.startCallGraph();
       ol.parseText(theTranslator->trCallerGraph());
