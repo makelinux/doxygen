@@ -3437,9 +3437,11 @@ void MemberDef::setAnchor()
   uchar md5_sig[16];
   QCString sigStr(33);
   MD5Buffer((const unsigned char *)memAnchor.data(),memAnchor.length(),md5_sig);
-  //printf("memAnchor=%s\n",memAnchor.data());
-  MD5SigToString(md5_sig,sigStr.rawData(),33);
-  m_impl->anc = "a"+sigStr;
+  printf("memAnchor=%s\n",memAnchor.data());
+  MD5SigToString(md5_sig,sigStr.rawData(),5);
+  //m_impl->anc = name()+"-"+sigStr;
+  m_impl->anc = name();
+  printf("%s %s\n", __func__, (const char*)m_impl->anc);
 }
 
 void MemberDef::setGroupDef(GroupDef *gd,Grouping::GroupPri_t pri,
