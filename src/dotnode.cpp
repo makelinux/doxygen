@@ -451,58 +451,59 @@ void DotNode::writeLabel(FTextStream &t, GraphType gt) const
   }
   else // standard look
   {
-    t << '"' << convertLabel(m_label) << '"';
+    if (Config_getString(DOT_NODE_ATTR).contains("shape=plain"))
+    {
+      if (m_isRoot)
+        t << "<<b>" << convertToXML(m_label) << "</b>>";
+      else if (m_truncated == Truncated)
+        t << "<<i>" << convertToXML(m_label) << "</i>>";
+      else
+        t << '"' << convertLabel(m_label) << '"';
+    }
+    else
+      t << '"' << convertLabel(m_label) << '"';
   }
+  t << ' ';
 }
 
-void DotNode::writeBox(FTextStream &t,
-                       GraphType gt,
-                       GraphOutputFormat /*format*/,
-                       bool hasNonReachableChildren) const
+void DotNode::writeNode(FTextStream &t, GraphType gt) const
 {
-  const char *labCol =
-    m_url.isEmpty() ? "grey75" :  // non link
-    (hasNonReachableChildren ? "red" : "black");
   t << "  Node" << m_number << " [";
   writeLabel(t,gt);
-  t << ",height=0.2,width=0.4";
-  if (m_isRoot)
+  if (m_truncated == Truncated)
+    t << "color=red ";
+  else if (m_url.isEmpty() && !m_isRoot)
+    t << "color=grey75 ";
+  if (!m_url.isEmpty() && !m_isRoot)
   {
-    t << ",color=\"black\", fillcolor=\"grey75\", style=\"filled\", fontcolor=\"black\"";
-  }
-  else
-  {
-    if (!Config_getBool(DOT_TRANSPARENT))
+    int anchorPos = m_url.findRev('#');
+    if (anchorPos==-1)
     {
-      t << ",color=\"" << labCol << "\", fillcolor=\"";
-      t << "white";
-      t << "\", style=\"filled\"";
+      t << "URL=\"" << m_url << Doxygen::htmlFileExtension << "\" ";
     }
     else
     {
-      t << ",color=\"" << labCol << "\"";
-    }
-    if (!m_url.isEmpty())
-    {
-      int anchorPos = m_url.findRev('#');
-      if (anchorPos==-1)
-      {
-        t << ",URL=\"" << m_url << Doxygen::htmlFileExtension << "\"";
-      }
-      else
-      {
-        t << ",URL=\"" << m_url.left(anchorPos) << Doxygen::htmlFileExtension
-          << m_url.right(m_url.length()-anchorPos) << "\"";
-      }
+      t << "URL=\"" << m_url.left(anchorPos) << Doxygen::htmlFileExtension
+        << m_url.right(m_url.length()-anchorPos) << "\" ";
     }
   }
   if (!m_tooltip.isEmpty())
   {
-    t << ",tooltip=\"" << escapeTooltip(m_tooltip) << "\"";
+    t << "tooltip=\"" << escapeTooltip(m_tooltip) << "\" ";
   }
   else
   {
-    t << ",tooltip=\" \""; // space in tooltip is required otherwise still something like 'Node0' is used
+    t << "tooltip=\" \" "; // space in tooltip is required otherwise still something like 'Node0' is used
+  }
+  if (!Config_getString(DOT_NODE_ATTR).contains("shape=plain"))
+  {
+    t << "height=0.2 width=0.4 ";
+    if (m_isRoot)
+      t << "color=black fillcolor=grey75 style=filled fontcolor=black ";
+    else
+      if (!Config_getBool(DOT_TRANSPARENT))
+        t << "fillcolor=white style=filled ";
+    t << " ";
   }
   t << "];" << endl;
 }
@@ -532,8 +533,7 @@ void DotNode::writeArrow(FTextStream &t,
   bool umlUseArrow = aStyle=="odiamond";
 
   if (pointBack && !umlUseArrow) t << "dir=\"back\",";
-  t << "color=\"" << eProps->edgeColorMap[ei->color()]
-    << "\",fontsize=\"" << Config_getInt(DOT_FONTSIZE) << "\",";
+  t << "color=\"" << eProps->edgeColorMap[ei->color()] << "\"";
   t << "style=\"" << eProps->edgeStyleMap[ei->style()] << "\"";
   if (!ei->label().isEmpty())
   {
@@ -552,7 +552,6 @@ void DotNode::writeArrow(FTextStream &t,
       t << ",arrowhead=\"" << eProps->arrowStyleMap[ei->color()] << "\"";
   }
 
-  if (format==GOF_BITMAP) t << ",fontname=\"" << Config_getString(DOT_FONTNAME) << "\"";
   t << "];" << endl;
 }
 
@@ -566,7 +565,7 @@ void DotNode::write(FTextStream &t,
   //printf("DotNode::write(%d) name=%s this=%p written=%d visible=%d\n",m_distance,m_label.data(),this,m_written,m_visible);
   if (m_written) return; // node already written to the output
   if (!m_visible) return; // node is not visible
-  writeBox(t,gt,format,m_truncated==Truncated);
+  writeNode(t, gt);
   m_written=TRUE;
   QList<DotNode> *nl = toChildren ? m_children : m_parents;
   if (nl)
