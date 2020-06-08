@@ -77,6 +77,7 @@ class DotNode
     void writeDEF(FTextStream &t) const;
     void writeBox(FTextStream &t,GraphType gt,GraphOutputFormat f,
                   bool hasNonReachableChildren) const;
+    void writeLabel(FTextStream &t, GraphType gt) const;
     void writeArrow(FTextStream &t,GraphType gt,GraphOutputFormat f,const DotNode *cn,
                     const EdgeInfo *ei,bool topDown, bool pointBack=TRUE) const;
 

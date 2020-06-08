@@ -372,16 +372,9 @@ void DotNode::deleteNodes(DotNode *node,SDict<DotNode> *skipNodes)
   deletedNodes.clear(); // actually remove the nodes.
 }
 
-void DotNode::writeBox(FTextStream &t,
-                       GraphType gt,
-                       GraphOutputFormat /*format*/,
-                       bool hasNonReachableChildren) const
+void DotNode::writeLabel(FTextStream &t, GraphType gt) const
 {
-  const char *labCol =
-    m_url.isEmpty() ? "grey75" :  // non link
-    (hasNonReachableChildren ? "red" : "black");
-  t << "  Node" << m_number << " [label=\"";
-
+  t << "label=";
   if (m_classDef && Config_getBool(UML_LOOK) && (gt==Inheritance || gt==Collaboration))
   {
     // add names shown as relations to a set, so we don't show
@@ -412,7 +405,7 @@ void DotNode::writeBox(FTextStream &t,
     }
 
     //printf("DotNode::writeBox for %s\n",m_classDef->name().data());
-    t << "{" << convertLabel(m_label);
+    t << "\"{" << convertLabel(m_label);
     t << "\\n|";
     writeBoxMemberList(t,'+',m_classDef->getMemberList(MemberListType_pubAttribs),m_classDef,FALSE,&arrowNames);
     writeBoxMemberList(t,'+',m_classDef->getMemberList(MemberListType_pubStaticAttribs),m_classDef,TRUE,&arrowNames);
@@ -454,13 +447,25 @@ void DotNode::writeBox(FTextStream &t,
         }
       }
     }
-    t << "}";
+    t << "}\"";
   }
   else // standard look
   {
-    t << convertLabel(m_label);
+    t << '"' << convertLabel(m_label) << '"';
   }
-  t << "\",height=0.2,width=0.4";
+}
+
+void DotNode::writeBox(FTextStream &t,
+                       GraphType gt,
+                       GraphOutputFormat /*format*/,
+                       bool hasNonReachableChildren) const
+{
+  const char *labCol =
+    m_url.isEmpty() ? "grey75" :  // non link
+    (hasNonReachableChildren ? "red" : "black");
+  t << "  Node" << m_number << " [";
+  writeLabel(t,gt);
+  t << ",height=0.2,width=0.4";
   if (m_isRoot)
   {
     t << ",color=\"black\", fillcolor=\"grey75\", style=\"filled\", fontcolor=\"black\"";
